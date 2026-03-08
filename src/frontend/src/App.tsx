@@ -44,6 +44,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { SiInstagram, SiLinkedin, SiX } from "react-icons/si";
 import { toast } from "sonner";
+import AdminPage from "./AdminPage";
 import { useActor } from "./hooks/useActor";
 
 // ──────────────────────────────────────────────
@@ -1448,17 +1449,26 @@ function Footer() {
           <p className="text-xs text-muted-foreground">
             © {year} Ankit Sharma. All rights reserved.
           </p>
-          <p className="text-xs text-muted-foreground">
-            Built with love using{" "}
+          <div className="flex items-center gap-4">
             <a
-              href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-violet hover:underline"
+              href="#admin"
+              data-ocid="admin.link"
+              className="text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors"
             >
-              caffeine.ai
+              Admin
             </a>
-          </p>
+            <p className="text-xs text-muted-foreground">
+              Built with love using{" "}
+              <a
+                href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-violet hover:underline"
+              >
+                caffeine.ai
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </footer>
@@ -1468,7 +1478,31 @@ function Footer() {
 // ──────────────────────────────────────────────
 // App Root
 // ──────────────────────────────────────────────
+function useHashRoute() {
+  const [hash, setHash] = useState(() => window.location.hash);
+
+  useEffect(() => {
+    const handleHashChange = () => setHash(window.location.hash);
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  return hash;
+}
+
 export default function App() {
+  const hash = useHashRoute();
+  const isAdmin = hash === "#admin";
+
+  if (isAdmin) {
+    return (
+      <>
+        <Toaster richColors position="top-right" />
+        <AdminPage />
+      </>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground font-body">
       <Toaster richColors position="top-right" />
